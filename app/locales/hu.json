@@ -122,10 +122,6 @@
   },
   "contributorPreferences": {
     "title": "Támogatói beállítások",
-    "notifications": "Szünet értesítések:",
-    "notificationsInfo": "A lent megadott időpontban értesítés fog érkezni, hogy felkészülhess a szünetekre.",
-    "beforeLongBreak": "Hosszú szünet előtt:",
-    "beforeMiniBreak": "Rövid szünet előtt:",
     "newVersion": "Új verzió:",
     "newVersionNotification": "Értesítsen, ha új verzió érhető el",
     "customIdeas": "Egyéni szünet alatti ötletek:",

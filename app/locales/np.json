@@ -108,10 +108,6 @@
   },
   "contributorPreferences": {
     "title": "योगदानकर्ता प्राथमिकताहरू",
-    "notifications": "ब्रेकबारे सूचनाहरू:",
-    "notificationsInfo": "प्रणाली सूचना ,तपाईंलाई यसको लागि तयार गर्न ब्रेकको अघि देखाइने छ ।",
-    "beforeLongBreak": "लामो ब्रेक:",
-    "beforeMiniBreak": "छोटो ब्रेक:",
     "newVersion": "नयाँ संस्करण:",
     "newVersionNotification": "सूचित गर्नुहोस् जब नयाँ संस्करण उपलब्ध हुन्छ ।",
     "customIdeas": "अनुकूलन विचारहरु:",

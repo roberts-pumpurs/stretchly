@@ -11,16 +11,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - breaks pause while a full screen app is open on macOS
 - on macOS, a due break waits until you stop typing
 - the menubar shows "Idle" on macOS while you are idle
+- a countdown next to the mouse pointer 5 seconds before a break starts, controlled by `cursorCountdown`
+- a *Notify before* slider for each break type in the Schedule tab of Preferences
 
 ### Changed
 - a postponed break comes back after a full break interval instead of after 2 or 5 minutes
 - while you are idle, the countdown to the next break stops and continues when you are back, so breaks do not start while you are away
+- the notification before a break now shows 60 seconds before it, for Mini breaks and Long breaks
 
 ### Removed
 - `microbreakPostponeTime` and `breakPostponeTime` preferences and their Contributor Preferences sliders
+- break notification sliders from Contributor Preferences, now in the Schedule tab of Preferences
 
 ### Fixed
 - fix snap startup crash
+- Contributor Preferences section titles line up with their settings again
 
 ## [1.22.1] - 2026-08-13
 ### Fixed

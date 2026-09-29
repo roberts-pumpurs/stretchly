@@ -115,10 +115,6 @@
   },
   "contributorPreferences": {
     "title": "Tukijan asetukset",
-    "notifications": "Taukoilmoitukset:",
-    "notificationsInfo": "Järjestelmäimoitus, joka näytetään ennen taukoa, jotta voit valmistautua siihen.",
-    "beforeLongBreak": "Pitkä tauko:",
-    "beforeMiniBreak": "Minitauko:",
     "newVersion": "Uusi versio:",
     "newVersionNotification": "Ilmoita, kun uusi versio on saatavilla",
     "customIdeas": "Omat vinkit:",

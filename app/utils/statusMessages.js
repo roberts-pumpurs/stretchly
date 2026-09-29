@@ -52,13 +52,13 @@ class StatusMessages {
     const breakInterval = this.settings.get('breakInterval') + 1
     const breakNumber = this.breakNumber % breakInterval
 
-    if (this.reference === 'startBreak' || this.reference === 'startBreakNotification') {
+    if (this.reference?.startsWith('startBreak')) {
       message += this.i18next.t('statusMessages.nextLongBreak') + ' ' +
         formatTimeIn(this.timeToNextBreak, this.settings.get('language'), this.i18next, this.humanizeDuration)
       return message
     }
 
-    if (this.reference === 'startMicrobreak' || this.reference === 'startMicrobreakNotification') {
+    if (this.reference?.startsWith('startMicrobreak')) {
       message += this.i18next.t('statusMessages.nextMiniBreak') + ' ' +
         formatTimeIn(this.timeToNextBreak, this.settings.get('language'), this.i18next, this.humanizeDuration)
       if (this.settings.get('break')) {

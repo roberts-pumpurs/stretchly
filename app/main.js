@@ -84,6 +84,9 @@ let welcomeWin = null
 let contributorPreferencesWin = null
 let syncPreferencesWin = null
 let myStretchlyWin = null
+let cursorCountdownWin = null
+let cursorCountdownTimer = null
+let cursorCountdownSeconds = null
 let settings
 let pausedForSuspendOrLock = false
 let nextIdea = null
@@ -363,6 +366,8 @@ async function initialize (isAppStart = true) {
     breakPlanner.nextBreak()
     breakPlanner.on('startMicrobreakNotification', () => { startMicrobreakNotification() })
     breakPlanner.on('startBreakNotification', () => { startBreakNotification() })
+    breakPlanner.on('startMicrobreakCountdown', () => { showCursorCountdown() })
+    breakPlanner.on('startBreakCountdown', () => { showCursorCountdown() })
     breakPlanner.on('startMicrobreak', () => { startMicrobreak() })
     breakPlanner.on('finishMicrobreak', (shouldPlaySound, shouldPlanNext) => {
       if (settings.get('miniBreakManualFinish')) {
@@ -744,6 +749,69 @@ function startBreakNotification () {
   updateTray()
 }
 
+const CURSOR_COUNTDOWN_SIZE = 48
+const CURSOR_COUNTDOWN_OFFSET = 20
+
+function showCursorCountdown () {
+  closeCursorCountdown()
+  log.info('Stretchly: showing countdown next to the cursor')
+  const win = new BrowserWindow({
+    width: CURSOR_COUNTDOWN_SIZE,
+    height: CURSOR_COUNTDOWN_SIZE,
+    show: false,
+    frame: false,
+    transparent: true,
+    hasShadow: false,
+    resizable: false,
+    movable: false,
+    focusable: false,
+    skipTaskbar: true,
+    alwaysOnTop: true,
+    webPreferences: {
+      preload: join(__dirname, './countdown-preload.mjs'),
+      sandbox: false
+    }
+  })
+  win.setIgnoreMouseEvents(true)
+  win.setAlwaysOnTop(true, 'screen-saver')
+  win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true, skipTransformProcessType: true })
+  win.webContents.on('did-finish-load', () => { cursorCountdownSeconds = null })
+  win.once('ready-to-show', () => {
+    if (!win.isDestroyed()) win.showInactive()
+  })
+  win.loadURL('file://' + join(__dirname, '/countdown.html'))
+  cursorCountdownWin = win
+  updateCursorCountdown()
+  cursorCountdownTimer = setInterval(updateCursorCountdown, 16)
+}
+
+function updateCursorCountdown () {
+  const reference = breakPlanner.scheduler?.reference
+  if (reference !== 'startMicrobreak' && reference !== 'startBreak') {
+    closeCursorCountdown()
+    return
+  }
+  const cursor = screen.getCursorScreenPoint()
+  const { x, y, width, height } = screen.getDisplayNearestPoint(cursor).workArea
+  cursorCountdownWin.setPosition(
+    Math.min(cursor.x + CURSOR_COUNTDOWN_OFFSET, x + width - CURSOR_COUNTDOWN_SIZE),
+    Math.min(cursor.y + CURSOR_COUNTDOWN_OFFSET, y + height - CURSOR_COUNTDOWN_SIZE)
+  )
+  const seconds = Math.max(1, Math.ceil(breakPlanner.timeToNextBreak / 1000))
+  if (seconds !== cursorCountdownSeconds) {
+    cursorCountdownSeconds = seconds
+    cursorCountdownWin.webContents.send('cursor-countdown', seconds)
+  }
+}
+
+function closeCursorCountdown () {
+  clearInterval(cursorCountdownTimer)
+  cursorCountdownTimer = null
+  cursorCountdownSeconds = null
+  if (cursorCountdownWin && !cursorCountdownWin.isDestroyed()) cursorCountdownWin.destroy()
+  cursorCountdownWin = null
+}
+
 function getBlurredBackgroundWindowOptions () {
   if (!settings.get('blurredBackground')) {
     return {}
@@ -761,6 +829,7 @@ function getBlurredBackgroundWindowOptions () {
 }
 
 function startMicrobreak () {
+  closeCursorCountdown()
   // don't start another break if break running
   if (microbreakWins) {
     log.warn('Stretchly: Mini break already running, not starting Mini break')
@@ -930,6 +999,7 @@ function startMicrobreak () {
 }
 
 function startBreak () {
+  closeCursorCountdown()
   if (breakWins) {
     log.warn('Stretchly: Long break already running, not starting Long break')
     return

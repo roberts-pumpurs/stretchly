@@ -78,6 +78,10 @@
       <label data-i18next="preferences.settings.delayBreaksWhileTyping" for="delayBreaksWhileTyping"></label>
     </div>
     <div>
+      <input type="checkbox" value="cursorCountdown" id="cursorCountdown">
+      <label data-i18next="preferences.settings.cursorCountdown" for="cursorCountdown"></label>
+    </div>
+    <div>
       <input type="checkbox" class="negative" value="monitorDnd" id="monitorDnd">
       <label data-i18next="preferences.settings.monitorDnd" for="monitorDnd"></label>
     </div>
@@ -222,6 +226,17 @@
         for="showNotificationBeforeMiniBreak"></label>
     </div>
     <div>
+      <label data-i18next="preferences.schedule.notifyBefore" data-same-width-label for="miniBreakNotifyBefore"></label>
+      <input type="range" min="5" max="120" step="5" list="tickmarksMiniBreakNotifyBefore"
+        name="microbreakNotificationInterval" data-divisor="1000" id="miniBreakNotifyBefore">
+      <datalist id="tickmarksMiniBreakNotifyBefore">
+        <option value="30"></option>
+        <option value="60"></option>
+        <option value="90"></option>
+      </datalist>
+      <output data-unit="seconds"></output>
+    </div>
+    <div>
       <input type="checkbox" value="microbreakPostpone" id="enablePostponeMini">
       <label data-i18next="preferences.schedule.enablePostponeMini" for="enablePostponeMini"></label>
     </div>
@@ -271,6 +286,17 @@
       <input type="checkbox" value="breakNotification" id="showNotificationBeforeLongBreak">
       <label data-i18next="preferences.schedule.showNotificationBeforeLongBreak"
         for="showNotificationBeforeLongBreak"></label>
+    </div>
+    <div>
+      <label data-i18next="preferences.schedule.notifyBefore" data-same-width-label for="longBreakNotifyBefore"></label>
+      <input type="range" min="5" max="120" step="5" list="tickmarksLongBreakNotifyBefore"
+        name="breakNotificationInterval" data-divisor="1000" id="longBreakNotifyBefore">
+      <datalist id="tickmarksLongBreakNotifyBefore">
+        <option value="30"></option>
+        <option value="60"></option>
+        <option value="90"></option>
+      </datalist>
+      <output data-unit="seconds"></output>
     </div>
     <div>
       <input type="checkbox" value="breakPostpone" id="enablePostponeLong">

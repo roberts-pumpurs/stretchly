@@ -288,10 +288,7 @@
     "breakPostponeInfo": "Kui see on põhieelistustes lubatud, saad pause edasi lükata. Järgmised seadistused võimaldavad määrata, millal, kui kauaks ja mitu korda saad pausi edasi lükata.",
     "showOnMonitor": "Näita pause",
     "showBreaksAsRegularWindows": "Kuva pausid tavaliste akendena",
-    "beforeMiniBreak": "Lühike paus:",
-    "beforeLongBreak": "Pikk paus:",
     "primary": "Peamisel monitoril",
-    "notificationsInfo": "Süsteemi märguanne kuvatakse enne pause, et saaksite selleks valmistuda.",
     "maxPostpones": "Maksimaalne edasilükkamiste arv:",
     "0": "Esimene monitor",
     "cursor": "Järgne kursorile",
@@ -299,8 +296,7 @@
     "pauseUntilMorningInfo": "Määrake, millise kellaajani funktsioon \"Peata hommikuni\" peaks peatuma.",
     "opacityTheme": "Väljanägemise läbipaistvus:",
     "miniBreaks": "Lühikesed pausid:",
-    "currentTimeInBreaks": "Praegune aeg",
-    "notifications": "Pauside teavitused:"
+    "currentTimeInBreaks": "Praegune aeg"
   },
   "longBreakIdeas": {
     "abf": {

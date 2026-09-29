@@ -138,7 +138,9 @@ By default, there is a 20 second Mini break every 10 minutes and a 5 minute Long
 
 <img src="longbreak.png" height="340">
 
-You'll be notified 10 seconds before a Mini break (and 30 seconds before a Long break) so that you can prepare to pause your work.
+You'll be notified 60 seconds before a break so that you can prepare to pause your work. You can change this time for each break type in Preferences, in the Schedule tab.
+
+5 seconds before a break starts, a small countdown shows next to the mouse pointer. You can turn this off in Preferences, or set `cursorCountdown` to `false`.
 
 <img src="notification.png" height="90">
 
@@ -219,6 +221,7 @@ Here are the preferences editable via the app. If values in the app does not sui
 - `ideas` - show break ideas
 - `naturalBreaks` - monitor idle time
 - `delayBreaksWhileTyping` - wait until typing stops before starting a break (macOS only)
+- `cursorCountdown` - show a countdown next to the mouse pointer 5 seconds before a break
 - `allScreens` - show breaks on all screens
 - `language` - language
 - `useMonochromeTrayIcon` - use monochrome icon
@@ -273,8 +276,8 @@ Supported image formats: PNG, JPEG, WebP, GIF. Only images from the local `image
 
 Stretchly sanitizes all HTML to keep break windows secure by removing any unsupported tags or unsafe content.
 
-#### Editing break notification interval [![Contributor Preferences](https://img.shields.io/badge/Contributor_Preferences-✔-success)](#contributor-preferences)
-In the preferences file, change `breakNotificationInterval: 30000,` to whatever value you want. 30000 is 30 seconds. Same goes for Mini breaks.
+#### Editing break notification interval
+In Preferences, in the Schedule tab, use the *Notify before* slider under each break type. In the preferences file, change `breakNotificationInterval: 60000,` to whatever value you want. 60000 is 60 seconds. Same goes for Mini breaks.
 
 #### Editing sunrise time to pause breaks until morning
 In the preferences file you can set the `morningHour` setting to pause until that hour today or the next day

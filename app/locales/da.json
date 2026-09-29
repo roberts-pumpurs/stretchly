@@ -116,10 +116,6 @@
   },
   "contributorPreferences": {
     "title": "Sponser præferencer",
-    "notifications": "Pause notifikationer:",
-    "notificationsInfo": "System notifikationer vises før pauser states for, at du kan forberede dig.",
-    "beforeLongBreak": "Lang pause:",
-    "beforeMiniBreak": "Mini pause:",
     "newVersion": "Ny version:",
     "newVersionNotification": "Fortæl mig når der er en ny version",
     "customIdeas": "Dine idéer:",

@@ -114,10 +114,6 @@
   },
   "contributorPreferences": {
     "title": "યોગદાનકર્તા પસંદગીઓ",
-    "notifications": "વિરામ સૂચનાઓ:",
-    "notificationsInfo": "સિસ્ટમ સૂચનાઓ તમને તેની તૈયારી કરવા માટે વિરામ પહેલાં બતાવવામાં આવે છે.",
-    "beforeLongBreak": "લાંબો વિરામ:",
-    "beforeMiniBreak": "લઘુ વિરામ:",
     "newVersion": "નવું સંસ્કરણ:",
     "newVersionNotification": "જ્યારે નવું સંસ્કરણ ઉપલબ્ધ હોય ત્યારે સૂચિત કરો",
     "customIdeas": "કસ્ટમ વિચારો:",

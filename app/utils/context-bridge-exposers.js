@@ -37,6 +37,12 @@ function exposeBreaks (type) {
   })
 }
 
+function exposeCountdown () {
+  contextBridge.exposeInMainWorld('countdown', {
+    onUpdate: (callback) => ipcRenderer.on('cursor-countdown', (_event, seconds) => callback(seconds))
+  })
+}
+
 function exposeRuntime () {
   contextBridge.exposeInMainWorld('runtime', {
     platform: () => process.platform,
@@ -129,6 +135,7 @@ export {
   exposeGlobal,
   exposeI18next,
   exposeBreaks,
+  exposeCountdown,
   exposeSemver,
   exposeSettings,
   exposeStretchly,

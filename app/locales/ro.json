@@ -126,7 +126,6 @@
   },
   "contributorPreferences": {
     "title": "Preferințele colaboratorilor",
-    "notifications": "Notificări pentru pauze:",
     "newVersionNotification": "Notificați când noua versiune este disponibilă",
     "customIdeas": "Idei personalizate:",
     "useIdeasFromSettings": "Utilizați idei pentru pauze din fișierul de configurare",
@@ -162,9 +161,6 @@
     "breakPostponeInfo": "Dacă sunt activate în Preferințele principale, puteți amâna pauzele. Următoarele setări vă permit să specificați când, pentru cât timp și de câte ori puteți amâna o pauză.",
     "timeToBreakInTray": "Timp pentru pauză",
     "showTimeToBreakInTray": "Afișați timpul până la următoarea pauză în pictograma barei de meniu",
-    "notificationsInfo": "Notificare de sistem afișată înainte de pauze pentru a vă permite să vă pregătiți pentru aceasta.",
-    "beforeLongBreak": "Pauză lungă:",
-    "beforeMiniBreak": "Pauză scurtă:",
     "newVersion": "Versiune nouă:",
     "breakWindowSize": "Dimensiunea ferestrei the pauză",
     "breakWindowSizeInfo": "Ce procent din ecran ar trebui să ascundă fereastra de pauză?",

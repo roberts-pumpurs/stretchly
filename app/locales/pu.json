@@ -114,10 +114,6 @@
   },
   "contributorPreferences": {
     "title": "ਯੋਗਦਾਨ ਪਸੰਦ",
-    "notifications": "ਬਰੇਕ ਨੋਟੀਫਿਕੇਸ਼ਨ:",
-    "notificationsInfo": "ਸਿਸਟਮ ਨੋਟੀਫਿਕੇਸ਼ਨ ਬਰੇਕ ਤੋਂ ਪਹਿਲਾਂ ਦਿਖਾਇਆ ਗਿਆ ਹੈ ਤਾਂ ਜੋ ਤੁਹਾਨੂੰ ਇਸ ਦੀ ਤਿਆਰੀ ਕਰਨ ਲਈ.",
-    "beforeLongBreak": "ਲੰਮੇ ਬਰੇਕ:",
-    "beforeMiniBreak": "ਛੋਟੇ ਬਰੇਕ:",
     "newVersion": "ਨਵਾਂ ਸੰਸਕਰਣ:",
     "newVersionNotification": "ਜਦੋਂ ਨਵਾਂ ਵਰਜਨ ਉਪਲਬਧ ਹੋਵੇ ਤਾਂ ਸੂਚਿਤ ਕਰੋ",
     "customIdeas": "ਕਸਟਮ ਵਿਚਾਰ:",

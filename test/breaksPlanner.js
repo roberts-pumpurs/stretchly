@@ -38,6 +38,7 @@ describe('breaksPlanner', () => {
     settings.set('breakInterval', 2)
     settings.set('microbreakNotificationInterval', 30000)
     settings.set('breakNotificationInterval', 30000)
+    settings.set('cursorCountdown', false)
     breaksPlanner = new BreaksPlanner(settings)
   })
 
@@ -123,6 +124,68 @@ describe('breaksPlanner', () => {
       breaksPlanner.nextBreak()
       await vi.advanceTimersByTimeAsync(600000)
       started.mock.calls.length.should.equal(1)
+    })
+  })
+
+  describe('cursor countdown', () => {
+    beforeEach(() => {
+      vi.useFakeTimers()
+      settings.set('cursorCountdown', true)
+      settings.set('delayBreaksWhileTyping', false)
+    })
+
+    afterEach(() => {
+      vi.useRealTimers()
+    })
+
+    it('counts down the last 5 seconds before a break without moving the break', async () => {
+      settings.set('microbreakNotification', false)
+      const countdown = vi.fn()
+      const started = vi.fn()
+      breaksPlanner.on('startMicrobreakCountdown', countdown)
+      breaksPlanner.on('startMicrobreak', started)
+      breaksPlanner.nextBreak()
+      breaksPlanner.timeToNextBreak.should.equal(600000)
+      await vi.advanceTimersByTimeAsync(594999)
+      countdown.mock.calls.length.should.equal(0)
+      await vi.advanceTimersByTimeAsync(1)
+      countdown.mock.calls.length.should.equal(1)
+      breaksPlanner.scheduler.reference.should.equal('startMicrobreak')
+      breaksPlanner.timeToNextBreak.should.equal(5000)
+      await vi.advanceTimersByTimeAsync(4999)
+      started.mock.calls.length.should.equal(0)
+      await vi.advanceTimersByTimeAsync(1)
+      started.mock.calls.length.should.equal(1)
+    })
+
+    it('counts down after the notification, inside the notification time', async () => {
+      settings.set('microbreak', false)
+      const countdown = vi.fn()
+      const started = vi.fn()
+      breaksPlanner.on('startBreakNotification', () => breaksPlanner.nextBreakAfterNotification())
+      breaksPlanner.on('startBreakCountdown', countdown)
+      breaksPlanner.on('startBreak', started)
+      breaksPlanner.nextBreak()
+      await vi.advanceTimersByTimeAsync(600000 * 3 - 30000)
+      breaksPlanner.scheduler.reference.should.equal('startBreakCountdown')
+      breaksPlanner.timeToNextBreak.should.equal(30000)
+      await vi.advanceTimersByTimeAsync(25000)
+      countdown.mock.calls.length.should.equal(1)
+      await vi.advanceTimersByTimeAsync(5000)
+      started.mock.calls.length.should.equal(1)
+    })
+
+    it('drops the break when it is postponed during the countdown', async () => {
+      settings.set('microbreakNotification', false)
+      const started = vi.fn()
+      breaksPlanner.on('startMicrobreak', started)
+      breaksPlanner.nextBreak()
+      await vi.advanceTimersByTimeAsync(596000)
+      breaksPlanner.postponeCurrentBreak()
+      breaksPlanner.scheduler.reference.should.equal('startMicrobreakCountdown')
+      breaksPlanner.timeToNextBreak.should.equal(600000)
+      await vi.advanceTimersByTimeAsync(10000)
+      started.mock.calls.length.should.equal(0)
     })
   })
 

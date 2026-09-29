@@ -111,9 +111,6 @@
   "contributorPreferences": {
     "newVersionNotification": "アプリの更新がある場合に通知する",
     "dark": "ダーク",
-    "notificationsInfo": "システム通知は休憩前に準備時間を設けるために表示されます。",
-    "beforeLongBreak": "休憩:",
-    "beforeMiniBreak": "小休憩:",
     "newVersion": "アプリの更新:",
     "showWelcomeWindow": "次の起動時にようこそ画面を表示する",
     "volume": "ボリューム:",
@@ -132,7 +129,6 @@
     "timeToBreakInTray": "休憩時間",
     "showTimeToBreakInTray": "メニューバーアイコンに次の休憩までの時間を表示する",
     "4": "5番目のモニター",
-    "notifications": "休憩の通知:",
     "customIdeas": "詳細設定:",
     "customIdeasInfo": "設定ファイルを編集することで詳細設定を行えます。(上級者向け)",
     "useIdeasFromSettings": "設定ファイルの設定を使用する",

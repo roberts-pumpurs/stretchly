@@ -1,0 +1,26 @@
+html,
+body {
+  background: transparent;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+.countdown {
+  align-items: center;
+  background: rgba(20, 20, 20, 0.8);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  box-sizing: border-box;
+  color: #fff;
+  display: flex;
+  font: 600 20px -apple-system, BlinkMacSystemFont, sans-serif;
+  font-variant-numeric: tabular-nums;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+}
+
+.countdown:empty {
+  visibility: hidden;
+}
