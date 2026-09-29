@@ -140,7 +140,6 @@
     "breakPostponeInfo": "若在偏好设置启用，就能延后休息。以下设置让您能够指定延后休息的具体配置。",
     "miniBreaks": "小憩：",
     "postponableFor": "延后情况：",
-    "postponeFor": "延后多久：",
     "maxPostpones": "最大延后次数：",
     "longBreaks": "休息：",
     "pauseUntilMorning": "暂停至早晨：",

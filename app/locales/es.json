@@ -140,7 +140,6 @@
     "breakPostponeInfo": "Si está habilitado en las preferencias principales, puede posponer los descansos. Las siguientes configuraciones le permiten especificar cuándo, por cuánto tiempo y cuántas veces puede posponer un descanso.",
     "miniBreaks": "Descansos cortos:",
     "postponableFor": "Aplazable durante:",
-    "postponeFor": "Aplazar durante:",
     "maxPostpones": "Máximo de aplazamientos:",
     "longBreaks": "Descansos largos:",
     "pauseUntilMorning": "Pausa hasta la mañana:",

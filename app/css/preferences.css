@@ -83,6 +83,75 @@ body > div > :last-child {
   margin-right: 32px;
 }
 
+.settings > .dnd-apps {
+  padding-left: 20px;
+}
+
+body[dir=rtl] .settings > .dnd-apps {
+  padding-left: 0;
+  padding-right: 20px;
+}
+
+.dnd-apps ul {
+  background: var(--select-bg);
+  border-radius: 6px;
+  box-shadow: var(--select-shadow);
+  list-style: none;
+  margin: 6px 0 8px;
+  padding: 0;
+}
+
+.dnd-apps ul:empty {
+  display: none;
+}
+
+.dnd-apps li {
+  align-items: center;
+  color: var(--select-color);
+  display: flex;
+  gap: 8px;
+  padding: 4px 6px 4px 8px;
+}
+
+.dnd-apps li + li {
+  border-top: 1px solid rgba(128, 128, 128, 0.25);
+}
+
+.dnd-apps .app-icon {
+  flex: none;
+  height: 20px;
+  width: 20px;
+}
+
+.dnd-apps span.app-icon {
+  align-items: center;
+  background: var(--has-select-before-bg);
+  border-radius: 5px;
+  color: #FFFFFF;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: bold;
+  justify-content: center;
+}
+
+.dnd-apps li > span:not(.app-icon) {
+  flex: 1;
+}
+
+.dnd-apps li > button {
+  background: none;
+  box-shadow: none;
+  color: inherit;
+  font-size: 16px;
+  line-height: 1;
+  opacity: 0.6;
+  padding: 0 4px;
+}
+
+.dnd-apps li > button:hover {
+  opacity: 1;
+}
+
 .schedule {
   display: grid;
   font-size: 13px;

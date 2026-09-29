@@ -133,7 +133,6 @@
     "breakPostponeInfo": "기본 환경설정에서 활성화된 경우 휴식을 연기할 수 있습니다. 다음 설정을 통해 휴식을 언제, 얼마나 오래, 몇 번 연기할 수 있는지 지정할 수 있습니다.",
     "miniBreaks": "짧은 휴식:",
     "postponableFor": "연기 가능 시간:",
-    "postponeFor": "연기 시간:",
     "maxPostpones": "최대 연기 횟수:",
     "longBreaks": "긴 휴식:",
     "pauseUntilMorning": "아침까지 일시 중지:",

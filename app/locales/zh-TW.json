@@ -134,7 +134,6 @@
     "breakPostponeInfo": "如果有在主偏好設定啟用，就能延後休息。以下設定讓您能夠指定延後休息的時機、時長及次數。",
     "miniBreaks": "小休息：",
     "postponableFor": "延後情況：",
-    "postponeFor": "延後多久：",
     "maxPostpones": "延後最大次數：",
     "longBreaks": "長休息：",
     "pauseUntilMorning": "暫停到早上：",

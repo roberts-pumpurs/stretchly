@@ -5,6 +5,7 @@ class StatusMessages {
     this.reference = breakPlanner.scheduler.reference
     this.doNotDisturb = breakPlanner.dndManager.isOnDnd
     this.appExclusionPause = breakPlanner.appExclusionsManager.isSchedulerCleared
+    this.isIdle = breakPlanner.isIdle
     this.timeLeft = breakPlanner.scheduler.timeLeft
     this.timeToNextBreak = breakPlanner.timeToNextBreak
     this.isPaused = breakPlanner.isPaused
@@ -31,6 +32,11 @@ class StatusMessages {
           this.i18next.t('statusMessages.indefinitely')
         return message
       }
+    }
+
+    if (this.isIdle) {
+      message += this.i18next.t('statusMessages.idle') + ' - ' + this.i18next.t('statusMessages.idleInfo')
+      return message
     }
 
     if (this.doNotDisturb) {

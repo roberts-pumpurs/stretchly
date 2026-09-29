@@ -142,7 +142,7 @@ You'll be notified 10 seconds before a Mini break (and 30 seconds before a Long 
 
 <img src="notification.png" height="90">
 
-When a break starts, you can postpone it once for 2 minutes (Mini breaks) or 5 minutes (Long breaks). Then, after a specific time interval passes, you can skip the break. Both actions are available by clicking on the link at the bottom of window or by using the `Ctrl/Cmd + X` keyboard shortcut.
+When a break starts, you can postpone it once. A postponed break comes back after a full break interval, as if the break timer was reset. Then, after a specific time interval passes, you can skip the break. Both actions are available by clicking on the link at the bottom of window or by using the `Ctrl/Cmd + X` keyboard shortcut.
 
 <img src="skip.png" height="340">
 
@@ -150,7 +150,9 @@ Clicking the *Stretchly* icon in your tray area will display the current status 
 
 <img src="tray.png" height="140">
 
-*Stretchly* is monitoring your idle time, so when you are idle for 5 minutes, breaks will be paused until you return.
+*Stretchly* is monitoring your idle time. When there is no mouse or keyboard input for 20 seconds, the countdown to the next break stops, so a break never starts while you are away. The tray shows the paused icon, and on macOS the menubar shows "Idle" next to it. When you are back, the countdown continues with the time that was left. When you are idle for 5 minutes, *Stretchly* counts that as a break and starts a new countdown when you return.
+
+On macOS, when a break is due while you are typing, *Stretchly* waits until you stop typing for 3 seconds. You can turn this off in Preferences, or set `delayBreaksWhileTyping` to `false`.
 
 *Stretchly* is also monitoring Do Not Disturb mode, so breaks are paused when DnD mode is On. Breaks are also paused during Zoom meetings, while [Do Not Disturb apps](#do-not-disturb-apps) run, and, on macOS, while a full screen app is open. Breaks resume when these end.
 
@@ -216,6 +218,7 @@ Here are the preferences editable via the app. If values in the app does not sui
 - `fullscreen` - show breaks in fullscreen mode
 - `ideas` - show break ideas
 - `naturalBreaks` - monitor idle time
+- `delayBreaksWhileTyping` - wait until typing stops before starting a break (macOS only)
 - `allScreens` - show breaks on all screens
 - `language` - language
 - `useMonochromeTrayIcon` - use monochrome icon
@@ -223,7 +226,8 @@ Here are the preferences editable via the app. If values in the app does not sui
 - `silentNotifications` - enable sounds
 - `monitorDnd` - monitor DND mode
 - `monitorFullscreen` - pause breaks while a full screen app is open (macOS only)
-- `monitorDndApps` - pause breaks during Zoom meetings and while `dndApps` run
+- `monitorDndApps` - pause breaks during Zoom meetings and while `doNotDisturbApps` run
+- `doNotDisturbApps` - apps that pause breaks while they run (macOS: edit in Preferences)
 - `checkNewVersion` - check for new versions
 
 #### Editing break ideas
@@ -282,7 +286,7 @@ E.g. if you live in Boston you would set:
 `posLongitude: 71`
 
 #### Editing postpone functionality [![Contributor Preferences](https://img.shields.io/badge/Contributor_Preferences-✔-success)](#contributor-preferences)
-In the preferences file, you can edit `microbreakPostpone` and `breakPostpone` to enable or disable the ability to postpone breaks, `microbreakPostponeTime` and `breakPostponeTime` to change the postpone time in milliseconds, `microbreakPostponesLimit` and `breakPostponesLimit` to change the number of allowed postpones per break, and finally, `microbreakPostponableDurationPercent` and `breakPostponableDurationPercent` to change the percentage of the break during which the user can postpone it.
+In the preferences file, you can edit `microbreakPostpone` and `breakPostpone` to enable or disable the ability to postpone breaks, `microbreakPostponesLimit` and `breakPostponesLimit` to change the number of allowed postpones per break, and finally, `microbreakPostponableDurationPercent` and `breakPostponableDurationPercent` to change the percentage of the break during which the user can postpone it. A postponed break always comes back after a full break interval.
 
 #### New version notification [![Contributor Preferences](https://img.shields.io/badge/Contributor_Preferences-✔-success)](#contributor-preferences)
 In the preferences file, set `notifyNewVersion: false,` to disable new version notification.
@@ -305,10 +309,17 @@ You can also set `naturalBreaksCheckInterval` in milliseconds: how often idle ti
 In the preferences file, set `monitorDndCheckInterval` in milliseconds: how often Do Not Disturb status is checked. This also sets how often full screen apps and Do Not Disturb apps are checked. A higher number means lower CPU and energy usage, but slightly less responsive detection. On macOS and Linux this check can be relatively expensive, so increasing it can noticeably lower energy usage. Default value is `2000` which is 2 seconds.
 
 #### Do Not Disturb apps
-In the preferences file, edit `dndApps` to list process names. Breaks pause while any of these processes runs, the same as in Do Not Disturb mode. Matching is by exact process name, is case-insensitive, and ignores a `.exe` suffix. The default value is `["CptHost"]`. Zoom starts `CptHost` only while you are in a meeting, so this entry detects Zoom meetings. For example, to also pause breaks while OBS or Keynote runs:
+Breaks pause while any Do Not Disturb app runs, the same as in Do Not Disturb mode. The default list has one entry, "Zoom meeting". Zoom starts its `CptHost` process only while you are in a meeting, so this entry detects Zoom meetings.
+
+On macOS, manage the list in Preferences, below "Show breaks even during Zoom meetings and while Do Not Disturb apps run". Click "Add app…" and pick one or more apps. Click × to remove an app. *Stretchly* reads the process name from the app bundle.
+
+On other platforms, edit `doNotDisturbApps` in the preferences file. Each entry has a `name` to show and a `process` to match. Matching is by exact process name, is case-insensitive, and ignores a `.exe` suffix. For example, to also pause breaks while OBS runs:
 
 ```
-"dndApps": ["CptHost", "obs", "Keynote"]
+"doNotDisturbApps": [
+  { "name": "Zoom meeting", "process": "CptHost" },
+  { "name": "OBS", "process": "obs64.exe" }
+]
 ```
 
 Set `monitorDndApps` to `false` (or check "Show breaks even during Zoom meetings and while Do Not Disturb apps run" in Preferences) to turn this off.

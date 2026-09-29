@@ -132,7 +132,6 @@
     "breakPostponeInfo": "Cando está activado na configuración principal, podes adiar os descansos. As seguintes opcións permítenche especificar cando, canto tempo, e cantas veces podes adiar un descanso.",
     "miniBreaks": "Descansos breves:",
     "postponableFor": "Pódese adiar durante:",
-    "postponeFor": "Adiar durante:",
     "maxPostpones": "Número máximo de aprazamentos:",
     "longBreaks": "Descansos longos:",
     "pauseUntilMorning": "Pausa ata mañá:",

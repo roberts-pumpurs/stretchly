@@ -135,7 +135,6 @@
     "breakPostponeInfo": "Si autorisé dans les paramètres principaux, permet de reporter les pauses. Les paramètres suivants vous permettent de définir quand, pour combien de temps et à quelle fréquence vous pouvez reporter des pauses.",
     "miniBreaks": "Petites pauses :",
     "postponableFor": "Peut être reporté de :",
-    "postponeFor": "Reporter de :",
     "maxPostpones": "Nombre de reports maximum :",
     "longBreaks": "Grandes pauses :",
     "pauseUntilMorning": "Suspendre jusqu'au matin :",

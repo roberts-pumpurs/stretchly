@@ -1,7 +1,7 @@
 import {
   app, nativeTheme, BrowserWindow, Menu, ipcMain,
   screen, shell, dialog, globalShortcut, Tray,
-  powerMonitor
+  powerMonitor, nativeImage
 } from 'electron'
 import { EventEmitter } from 'node:events'
 import { readFile, writeFile, existsSync, mkdirSync } from 'node:fs'
@@ -30,6 +30,7 @@ import { registerBreakShortcuts } from './utils/breakShortcuts.js'
 import defaultSettings from './utils/defaultSettings.js'
 import StatusMessages from './utils/statusMessages.js'
 import DisplayManager from './utils/displayManager.js'
+import { readMacApp } from './utils/macApps.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -89,6 +90,7 @@ let nextIdea = null
 let danger = 0
 let updateChecker
 let currentTrayIconPath = null
+let currentTrayTitle = ''
 let currentTrayMenuTemplate = null
 let trayUpdateIntervalObj = null
 let endBreakShortcutSupported
@@ -571,6 +573,7 @@ function trayIconPath () {
       breakPlanner.isPaused ||
       breakPlanner.dndManager.isOnDnd ||
       breakPlanner.naturalBreaksManager.isSchedulerCleared ||
+      breakPlanner.isIdle ||
       breakPlanner.appExclusionsManager.isSchedulerCleared,
     monochrome: settings.get('useMonochromeTrayIcon'),
     inverted: useDarkColors,
@@ -1369,6 +1372,14 @@ function updateTray () {
       currentTrayIconPath = newTrayIconPath
     }
 
+    if (process.platform === 'darwin') {
+      const newTrayTitle = breakPlanner.isIdle ? i18next.t('statusMessages.idle') : ''
+      if (newTrayTitle !== currentTrayTitle) {
+        appIcon.setTitle(newTrayTitle)
+        currentTrayTitle = newTrayTitle
+      }
+    }
+
     const newTrayMenuTemplate = getTrayMenuTemplate()
     if (JSON.stringify(newTrayMenuTemplate) !== JSON.stringify(currentTrayMenuTemplate)) {
       const trayMenu = Menu.buildFromTemplate(newTrayMenuTemplate)
@@ -1621,6 +1632,7 @@ ipcMain.on('save-setting', function (event, key, value) {
       trayUpdateIntervalObj = null
       appIcon.destroy()
       appIcon = null
+      currentTrayTitle = ''
     }
   }
 
@@ -1635,7 +1647,7 @@ ipcMain.on('save-setting', function (event, key, value) {
 
   settings.set(key, value)
 
-  if (['monitorDnd', 'monitorFullscreen', 'monitorDndApps'].includes(key)) {
+  if (['monitorDnd', 'monitorFullscreen', 'monitorDndApps', 'doNotDisturbApps'].includes(key)) {
     breakPlanner.doNotDisturb()
   }
 
@@ -1793,6 +1805,32 @@ ipcMain.on('set-window-size', (event, width, height) => {
 
 ipcMain.handle('get-version', (event) => {
   return app.getVersion()
+})
+
+ipcMain.handle('choose-dnd-apps', async (event) => {
+  const { canceled, filePaths } = await dialog.showOpenDialog(BrowserWindow.fromWebContents(event.sender), {
+    defaultPath: '/Applications',
+    properties: ['openFile', 'multiSelections'],
+    filters: [{ name: 'Applications', extensions: ['app'] }]
+  })
+  if (canceled) return []
+  const apps = await Promise.all(filePaths.map(async (appPath) => {
+    try {
+      return await readMacApp(appPath)
+    } catch (e) {
+      log.error(`Stretchly: could not read app ${appPath}:`, e)
+      return null
+    }
+  }))
+  return apps.filter(entry => entry && entry.process)
+})
+
+ipcMain.handle('get-app-icon', async (event, appPath) => {
+  try {
+    return (await nativeImage.createThumbnailFromPath(appPath, { width: 40, height: 40 })).toDataURL()
+  } catch (e) {
+    return null
+  }
 })
 
 ipcMain.handle('resolve-local-image', (event, filename) => {

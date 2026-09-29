@@ -141,7 +141,6 @@
     "breakPostponeInfo": "Pokud je v hlavním nastavení povoleno, můžete přestávku odložit. Následující nastavení vám umožní nastavit kdy, na jak dlouho a kolikrát je možné přestávku odložit.",
     "miniBreaks": "Mini přestávky:",
     "postponableFor": "Můžou se odložit:",
-    "postponeFor": "Odloží se o:",
     "maxPostpones": "Maximální doba odložení:",
     "longBreaks": "Dlouhé přestávky:",
     "pauseUntilMorning": "Přerušení do rána:",

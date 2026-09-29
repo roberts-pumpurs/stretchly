@@ -7,8 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - breaks pause during Zoom meetings and resume when the meeting ends
-- `dndApps` preference: breaks pause while any listed app runs
+- Do Not Disturb apps: breaks pause while any chosen app runs, with an app picker in Preferences on macOS
 - breaks pause while a full screen app is open on macOS
+- on macOS, a due break waits until you stop typing
+- the menubar shows "Idle" on macOS while you are idle
+
+### Changed
+- a postponed break comes back after a full break interval instead of after 2 or 5 minutes
+- while you are idle, the countdown to the next break stops and continues when you are back, so breaks do not start while you are away
+
+### Removed
+- `microbreakPostponeTime` and `breakPostponeTime` preferences and their Contributor Preferences sliders
 
 ### Fixed
 - fix snap startup crash

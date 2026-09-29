@@ -128,7 +128,6 @@
     "breakPostponeInfo": "Jos otettu käyttöön pääasetuksissa, voit lykätä taukoja. Seuraavat asetukset antavat sinun määrittää milloin, kuinka pitkään ja kuinka monta kertaa voit lykätä taukoja.",
     "miniBreaks": "Minitauot:",
     "postponableFor": "Lykättävissä:",
-    "postponeFor": "Lykkää:",
     "maxPostpones": "Maks. lykkäyksiä:",
     "longBreaks": "Pitkät tauot:",
     "pauseUntilMorning": "Pysäytä aamuun saakka:",

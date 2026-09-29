@@ -57,7 +57,7 @@ class DndManager extends EventEmitter {
     if (this.timer) return
     this.monitorDnd = this.settings.get('monitorDnd')
     this.monitorFullscreen = this.settings.get('monitorFullscreen') && process.platform === 'darwin'
-    this.dndApps = this.settings.get('monitorDndApps') ? this.settings.get('dndApps').map(normalizeProcessName) : []
+    this.dndApps = this.settings.get('monitorDndApps') ? this.settings.get('doNotDisturbApps').map(({ process }) => normalizeProcessName(process)) : []
     if (!this.monitorDnd && !this.monitorFullscreen && this.dndApps.length === 0) return
     this._checkDnd()
     log.info(`Stretchly: starting Do Not Disturb monitoring (DND: ${this.monitorDnd}, full screen apps: ${this.monitorFullscreen}, apps: ${JSON.stringify(this.dndApps)})`)

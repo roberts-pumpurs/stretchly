@@ -272,7 +272,6 @@
     "system": "Süsteemikohane",
     "light": "Hele",
     "volume": "Helitugevus:",
-    "postponeFor": "Lükka edasi:",
     "showBreaksAsRegularWindowsInfo": "Kui see on sisse lülitatud, muutuvad pausiaknad fookustatavaks, need ei ole enam \"Alati pealmised\" ja ilmuvad ka tegumiribale.",
     "breakWindowWidth": "Laius:",
     "showTimeToBreakInTray": "Kuva menüüriba ikoonil aeg järgmise pausini",

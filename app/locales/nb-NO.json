@@ -29,7 +29,6 @@
     "showWelcomeWindow": "Vis velkomstvindu ved neste oppstart",
     "pauseUntilMorningInfo": "Angi hvilken morgentime «Utsett til i morgen» skal bety.",
     "maxPostpones": "Maksimalt antall utsettelser:",
-    "postponeFor": "Utsett i:",
     "postponableFor": "Kan utsettes i:",
     "miniBreaks": "Minipauser:",
     "breakPostponeInfo": "Dersom du tillater det i innstillingene kan du utsette pauser. Følgende innstillinger lar deg angi når, hvor lenge, og hvor mange ganger du ønsker å kunne utsette en pause.",

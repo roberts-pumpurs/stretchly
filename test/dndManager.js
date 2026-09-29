@@ -69,11 +69,11 @@ describe('dndManager', function () {
   }))
 
   it('matches DND apps by process name, ignoring case and .exe', async () => {
-    settings.set('dndApps', ['NODE.exe', 'stretchly-missing-app'])
+    settings.set('doNotDisturbApps', [{ name: 'Node', process: 'NODE.exe' }, { name: 'Missing', process: 'stretchly-missing-app' }])
     dndManager.stop()
     dndManager.start()
     ;(await dndManager._runningDndApp()).should.be.equal('node')
-    settings.set('dndApps', ['stretchly-missing-app'])
+    settings.set('doNotDisturbApps', [{ name: 'Missing', process: 'stretchly-missing-app' }])
     dndManager.stop()
     dndManager.start()
     ;((await dndManager._runningDndApp()) === undefined).should.be.equal(true)

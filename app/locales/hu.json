@@ -135,7 +135,6 @@
     "breakPostponeInfo": "Lehetőség van a szünetek elhalasztására, ha a Beállítások ablakban engedélyezed azt. A következő beállítások segítségével megadhatod, hogy mikor, milyen hosszú időre, illetve hány alkalommal halaszthass el egy szünetet.",
     "miniBreaks": "Rövid szünetek:",
     "postponableFor": "Elhalasztható eddig:",
-    "postponeFor": "Elhalasztás eddig:",
     "maxPostpones": "Elhalasztható ennyiszer:",
     "longBreaks": "Hosszú szünetek:",
     "pauseUntilMorning": "Felfüggesztés reggelig:",

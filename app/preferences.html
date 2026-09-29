@@ -5,9 +5,9 @@
   <meta charset="UTF-8">
   <title data-i18next="preferences.title"></title>
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self'; script-src 'self'; connect-src https://api.github.com">
+    content="default-src 'self'; script-src 'self'; img-src 'self' data:; connect-src https://api.github.com">
   <meta http-equiv="X-Content-Security-Policy"
-    content="default-src 'self'; script-src 'self'; connect-src https://api.github.com">
+    content="default-src 'self'; script-src 'self'; img-src 'self' data:; connect-src https://api.github.com">
   <link rel="stylesheet" type="text/css" href="css/normalize.css">
   <link rel="stylesheet" type="text/css" href="css/commons.css">
   <link rel="stylesheet" type="text/css" href="css/color-scheme.css">
@@ -73,6 +73,10 @@
       <input type="checkbox" value="naturalBreaks" id="monitorIdleTime">
       <label data-i18next="preferences.settings.monitorIdleTime" for="monitorIdleTime"></label>
     </div>
+    <div class="linux-hidden win32-hidden">
+      <input type="checkbox" value="delayBreaksWhileTyping" id="delayBreaksWhileTyping">
+      <label data-i18next="preferences.settings.delayBreaksWhileTyping" for="delayBreaksWhileTyping"></label>
+    </div>
     <div>
       <input type="checkbox" class="negative" value="monitorDnd" id="monitorDnd">
       <label data-i18next="preferences.settings.monitorDnd" for="monitorDnd"></label>
@@ -84,6 +88,13 @@
     <div>
       <input type="checkbox" class="negative" value="monitorDndApps" id="monitorDndApps">
       <label data-i18next="preferences.settings.monitorDndApps" for="monitorDndApps"></label>
+    </div>
+    <div class="dnd-apps linux-hidden win32-hidden">
+      <span data-i18next="preferences.settings.dndApps"></span>
+      <ul id="dndAppsList"></ul>
+      <div>
+        <button type="button" id="addDndApp" data-i18next="preferences.settings.addDndApp"></button>
+      </div>
     </div>
     <div>
       <hr />

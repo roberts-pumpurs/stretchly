@@ -139,7 +139,6 @@
     "breakPostponeInfo": "Om uppskjutning är aktiverad i huvudinställningarna kan du här ange när, hur länge och hur många gånger en paus får skjutas upp.",
     "miniBreaks": "Korta pauser:",
     "postponableFor": "Kan skjutas upp under:",
-    "postponeFor": "Skjut upp med:",
     "maxPostpones": "Högsta antal uppskjutningar:",
     "longBreaks": "Långa pauser:",
     "pauseUntilMorning": "Pausa till morgonen:",

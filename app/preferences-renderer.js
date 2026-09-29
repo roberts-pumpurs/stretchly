@@ -222,6 +222,54 @@ window.onload = async (e) => {
     }
   }
 
+  let doNotDisturbApps = settings.doNotDisturbApps
+  const dndAppsList = document.querySelector('#dndAppsList')
+  const renderDndApps = async () => {
+    const removeLabel = await window.i18next.t('preferences.settings.removeDndApp')
+    const rows = await Promise.all(doNotDisturbApps.map(async (dndApp) => {
+      const row = document.createElement('li')
+      const iconSource = dndApp.path && await window.stretchly.getAppIcon(dndApp.path)
+      const icon = document.createElement(iconSource ? 'img' : 'span')
+      icon.className = 'app-icon'
+      if (iconSource) {
+        icon.src = iconSource
+      } else {
+        icon.textContent = dndApp.name.charAt(0)
+      }
+      const name = document.createElement('span')
+      name.textContent = dndApp.name
+      name.title = dndApp.process
+      const remove = document.createElement('button')
+      remove.type = 'button'
+      remove.textContent = '×'
+      remove.title = removeLabel
+      remove.setAttribute('aria-label', `${removeLabel} ${dndApp.name}`)
+      remove.onclick = () => saveDndApps(doNotDisturbApps.filter(other => other !== dndApp))
+      row.append(icon, name, remove)
+      return row
+    }))
+    dndAppsList.replaceChildren(...rows)
+    setWindowHeight()
+  }
+  const saveDndApps = (apps) => {
+    doNotDisturbApps = apps
+    window.settings.saveSettings('doNotDisturbApps', apps)
+    renderDndApps()
+  }
+  renderDndApps()
+  if (!eventsAttached) {
+    document.querySelector('#addDndApp').onclick = async () => {
+      const known = new Set(doNotDisturbApps.map(dndApp => dndApp.process.toLowerCase()))
+      const added = (await window.stretchly.chooseDndApps()).filter(dndApp => {
+        const process = dndApp.process.toLowerCase()
+        if (known.has(process)) return false
+        known.add(process)
+        return true
+      })
+      if (added.length > 0) saveDndApps(doNotDisturbApps.concat(added))
+    }
+  }
+
   document.querySelectorAll('input[type="range"]').forEach(async range => {
     const divisor = range.dataset.divisor
     const output = range.closest('div').querySelector('output')

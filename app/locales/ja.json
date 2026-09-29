@@ -140,7 +140,6 @@
     "breakPostponeInfo": "メイン設定画面で有効にした場合、休憩を延期できます。以下ではいつ、どれくらい、どれくらいの頻度で延期できるかを設定できます。",
     "miniBreaks": "小休憩:",
     "postponableFor": "延期可能期間:",
-    "postponeFor": "延期時間:",
     "maxPostpones": "最大延期回数:",
     "longBreaks": "休憩:",
     "pauseUntilMorning": "朝まで一時停止:",

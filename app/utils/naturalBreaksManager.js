@@ -2,6 +2,16 @@ import EventEmitter from 'events'
 import log from 'electron-log/main.js'
 import { desktopIdle } from 'node-desktop-idle-v2'
 import { powerMonitor } from 'electron'
+import { execFile } from 'node:child_process'
+import { promisify } from 'node:util'
+
+const execFileAsync = promisify(execFile)
+const idleThreshold = 20000
+const typingPauseTime = 3000
+const macOSSecondsSinceKeyDownScript = `
+ObjC.import('CoreGraphics')
+$.CGEventSourceSecondsSinceLastEventType($.kCGEventSourceStateCombinedSessionState, $.kCGEventKeyDown)
+`
 
 class NaturalBreaksManager extends EventEmitter {
   constructor (settings) {
@@ -44,18 +54,35 @@ class NaturalBreaksManager extends EventEmitter {
     }
   }
 
+  async isTyping () {
+    if (process.platform !== 'darwin') return false
+    try {
+      const { stdout } = await execFileAsync('osascript', ['-l', 'JavaScript', '-e', macOSSecondsSinceKeyDownScript])
+      return parseFloat(stdout) * 1000 < typingPauseTime
+    } catch (e) {
+      if (!this._typingErrorLogged) {
+        log.error('Stretchly: typing detection error:', e)
+        this._typingErrorLogged = true
+      }
+      return false
+    }
+  }
+
   _checkIdleTime () {
     let lastIdleTime = 0
     this.timer = setInterval(() => {
       const idleTime = this.idleTime
-      if (!this.isOnNaturalBreak && idleTime > 20000) {
+      if (!this.isOnNaturalBreak && idleTime > idleThreshold) {
         this.isOnNaturalBreak = true
+        this.emit('idleStarted')
       }
-      if (this.isOnNaturalBreak && idleTime < 20000) {
+      if (this.isOnNaturalBreak && idleTime < idleThreshold) {
         this.isOnNaturalBreak = false
         if (lastIdleTime > this.settings.get('naturalBreaksInactivityResetTime')) {
           this.isSchedulerCleared = false
           this.emit('naturalBreakFinished')
+        } else {
+          this.emit('idleFinished')
         }
       }
       if (this.isOnNaturalBreak && idleTime > this.settings.get('naturalBreaksInactivityResetTime')) {
