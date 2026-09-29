@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [1.23.0] - 2026-09-29
 ### Added
 - breaks pause during Zoom meetings and resume when the meeting ends
 - Do Not Disturb apps: breaks pause while any chosen app runs, with an app picker in Preferences on macOS
@@ -912,7 +914,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - resume/pause functionality for reminder
 - scripts for creating installers for OS X, Windows, Linux
 
-[Unreleased]: https://github.com/hovancik/stretchly/compare/v1.22.1...HEAD
+[Unreleased]: https://github.com/roberts-pumpurs/stretchly/compare/v1.23.0...HEAD
+[1.23.0]: https://github.com/roberts-pumpurs/stretchly/releases/tag/v1.23.0
 [1.22.1]: https://github.com/hovancik/stretchly/compare/v1.22.0...v1.22.1
 [1.22.0]: https://github.com/hovancik/stretchly/compare/v1.21.0...v1.22.0
 [1.21.0]: https://github.com/hovancik/stretchly/compare/v1.20.0...v1.21.0

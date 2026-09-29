@@ -1,6 +1,6 @@
 {
   "name": "Stretchly",
-  "version": "1.22.1",
+  "version": "1.23.0",
   "description": "The break time reminder app",
   "main": "app/main.js",
   "type": "module",
@@ -38,6 +38,12 @@
   "build": {
     "appId": "net.hovancik.stretchly",
     "productName": "Stretchly",
+    "publish": {
+      "provider": "github",
+      "owner": "roberts-pumpurs",
+      "repo": "stretchly",
+      "releaseType": "draft"
+    },
     "dmg": {
       "icon": "build/icon.icns",
       "iconSize": 128,
@@ -61,11 +67,12 @@
         {
           "target": "dmg",
           "arch": [
-            "x64",
             "arm64"
           ]
         }
       ],
+      "identity": "-",
+      "hardenedRuntime": false,
       "extendInfo": {
         "LSBackgroundOnly": 1,
         "LSUIElement": 1

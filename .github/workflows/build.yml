@@ -10,23 +10,13 @@ permissions:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
-      fail-fast: false
+    runs-on: macos-latest
     steps:
-    - name: run on linux
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libarchive-tools pkg-config
     - name: Checkout
       uses: actions/checkout@v6
     - name: Setup build environment
       uses: ./.github/actions/setup-build
-    - name: Build packages
-      run: node_modules/.bin/electron-builder build
+    - name: Build and publish macOS arm64 package
+      run: node_modules/.bin/electron-builder build --mac --arm64 --publish always
       env:
         GH_TOKEN: ${{ secrets.github_token }}
