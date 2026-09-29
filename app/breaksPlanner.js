@@ -45,10 +45,10 @@ class BreaksPlanner extends EventEmitter {
       }
     })
 
-    this.dndManager.on('dndStarted', () => {
+    this.dndManager.on('dndStarted', (reason) => {
       if (!this.isPaused && this.scheduler.reference !== 'finishMicrobreak' && this.scheduler.reference !== 'finishBreak' && this.scheduler.reference !== null) {
         this.clear()
-        log.info('Stretchly: pausing breaks for Do Not Distrub')
+        log.info(`Stretchly: pausing breaks for ${reason}`)
         this.emit('updateToolTip')
       } else {
         this.dndManager.isOnDnd = false
@@ -58,7 +58,7 @@ class BreaksPlanner extends EventEmitter {
     this.dndManager.on('dndFinished', () => {
       if (!this.isPaused && this.scheduler.reference !== 'finishMicrobreak' && this.scheduler.reference !== 'finishBreak') {
         this.reset()
-        log.info('Stretchly: resuming breaks for Do Not Distrub')
+        log.info('Stretchly: resuming breaks after Do Not Disturb')
         this.emit('updateToolTip')
       }
     })
@@ -234,7 +234,7 @@ class BreaksPlanner extends EventEmitter {
     if (this.pollersSuspended) {
       this.pollersSuspended = false
       if (this.settings.get('naturalBreaks')) this.naturalBreaksManager.start()
-      if (this.settings.get('monitorDnd')) this.dndManager.start()
+      this.dndManager.start()
       this.appExclusionsManager.reinitialize(this.settings)
     }
   }
@@ -271,15 +271,12 @@ class BreaksPlanner extends EventEmitter {
     }
   }
 
-  doNotDisturb (shouldUse) {
-    if (shouldUse) {
-      this.dndManager.start()
-    } else {
-      this.dndManager.stop()
-      if (!this.isPaused && this.scheduler.reference === null) {
-        this.reset()
-      }
+  doNotDisturb () {
+    this.dndManager.stop()
+    if (!this.isPaused && this.scheduler.reference === null) {
+      this.reset()
     }
+    this.dndManager.start()
   }
 
   get timeToNextBreak () {

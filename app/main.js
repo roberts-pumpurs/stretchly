@@ -386,7 +386,8 @@ async function initialize (isAppStart = true) {
   } else {
     breakPlanner.clear()
     breakPlanner.appExclusionsManager.reinitialize(settings)
-    breakPlanner.doNotDisturb(settings.get('monitorDnd'))
+    breakPlanner.dndManager.stop()
+    breakPlanner.dndManager.start()
     breakPlanner.naturalBreaks(settings.get('naturalBreaks'))
     breakPlanner.nextBreak()
   }
@@ -1595,10 +1596,6 @@ ipcMain.on('save-setting', function (event, key, value) {
     breakPlanner.naturalBreaks(value)
   }
 
-  if (key === 'monitorDnd') {
-    breakPlanner.doNotDisturb(value)
-  }
-
   if (key === 'language') {
     i18next.changeLanguage(value)
   }
@@ -1637,6 +1634,10 @@ ipcMain.on('save-setting', function (event, key, value) {
   }
 
   settings.set(key, value)
+
+  if (['monitorDnd', 'monitorFullscreen', 'monitorDndApps'].includes(key)) {
+    breakPlanner.doNotDisturb()
+  }
 
   updateTray()
 })

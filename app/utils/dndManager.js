@@ -2,17 +2,47 @@ import EventEmitter from 'events'
 import log from 'electron-log/main.js'
 import { getFocusAssist } from 'windows-focus-assist'
 import dbus from '@particle/dbus-next'
-import { exec } from 'node:child_process'
+import psList from 'ps-list'
+import { exec, execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import { readFile } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import { isAbsolute, join } from 'node:path'
 
+const execFileAsync = promisify(execFile)
+const normalizeProcessName = (name) => name.toLowerCase().replace(/\.exe$/, '')
+
+const macOSFullscreenScript = `
+ObjC.import('AppKit')
+ObjC.import('CoreGraphics')
+ObjC.bindFunction('CGSMainConnectionID', ['int', []])
+ObjC.bindFunction('CGSCopyManagedDisplaySpaces', ['id', ['int']])
+function run (argv) {
+  const ownPid = Number(argv[0])
+  const displays = ObjC.deepUnwrap($.CGSCopyManagedDisplaySpaces($.CGSMainConnectionID())) || []
+  const inFullscreenSpace = displays.some(display => {
+    const space = display['Current Space'] || {}
+    const tiles = (space.TileLayoutManager && space.TileLayoutManager.TileSpaces) || []
+    return space.type === 4 && tiles.some(tile => typeof tile.pid === 'number' && tile.pid !== ownPid)
+  })
+  if (inFullscreenSpace) return true
+  const screens = $.NSScreen.screens.js
+  const mainHeight = screens[0].frame.size.height
+  const screenBounds = screens.map(screen => {
+    const { origin, size } = screen.frame
+    return { X: origin.x, Y: mainHeight - origin.y - size.height, Width: size.width, Height: size.height }
+  })
+  const windows = ObjC.deepUnwrap(ObjC.castRefToObject($.CGWindowListCopyWindowInfo(
+    $.kCGWindowListOptionOnScreenOnly | $.kCGWindowListExcludeDesktopElements, $.kCGNullWindowID))) || []
+  return windows.some(window => window.kCGWindowLayer === 0 && window.kCGWindowOwnerPID !== ownPid &&
+    screenBounds.some(bounds => ['X', 'Y', 'Width', 'Height'].every(key => window.kCGWindowBounds[key] === bounds[key])))
+}
+`
+
 class DndManager extends EventEmitter {
   constructor (settings) {
     super()
     this.settings = settings
-    this.monitorDnd = settings.get('monitorDnd')
     this.monitorDndCheckInterval = settings.get('monitorDndCheckInterval')
     this.timer = null
     this.isOnDnd = false
@@ -20,16 +50,17 @@ class DndManager extends EventEmitter {
     this._unsupDEErrorShown = false
     this._errorLogged = {}
 
-    if (this.monitorDnd) {
-      this.start()
-    }
+    this.start()
   }
 
   start () {
     if (this.timer) return
-    this.monitorDnd = true
+    this.monitorDnd = this.settings.get('monitorDnd')
+    this.monitorFullscreen = this.settings.get('monitorFullscreen') && process.platform === 'darwin'
+    this.dndApps = this.settings.get('monitorDndApps') ? this.settings.get('dndApps').map(normalizeProcessName) : []
+    if (!this.monitorDnd && !this.monitorFullscreen && this.dndApps.length === 0) return
     this._checkDnd()
-    log.info('Stretchly: starting Do Not Disturb monitoring')
+    log.info(`Stretchly: starting Do Not Disturb monitoring (DND: ${this.monitorDnd}, full screen apps: ${this.monitorFullscreen}, apps: ${JSON.stringify(this.dndApps)})`)
     if (process.platform === 'linux') {
       log.info(`System: Your Desktop seems to be ${this._desktopEnvironment}.`)
     }
@@ -37,7 +68,6 @@ class DndManager extends EventEmitter {
 
   stop () {
     if (!this.timer) return
-    this.monitorDnd = false
     this.isOnDnd = false
     clearInterval(this.timer)
     this.timer = null
@@ -141,41 +171,68 @@ class DndManager extends EventEmitter {
     return this.__sessionBus
   }
 
-  async _doNotDisturb () {
+  async _isDndEnabled () {
     // TODO also check for session state? https://github.com/felixrieseberg/electron-notification-state/tree/master#session-state
-    if (this.monitorDnd) {
-      if (process.platform === 'win32') {
-        let wfa = 0
-        try {
-          wfa = getFocusAssist().value
-        } catch (e) { wfa = -1 } // getFocusAssist() throw an error if OS isn't windows
-        return wfa === 1 || wfa === 2
-      } else if (process.platform === 'darwin') {
-        const macOSMajorVersion = parseInt(process.getSystemVersion().split('.')[0])
-        let cmd = ''
-        if (macOSMajorVersion >= 26) {
-          cmd = 'defaults read com.apple.controlcenter "NSStatusItem VisibleCC FocusModes"'
-        } else {
-          cmd = 'defaults read com.apple.controlcenter "NSStatusItem Visible FocusModes"'
-        }
-        try {
-          const asyncExec = this._getOrCreateAsyncExec()
-          const { stdout } = await asyncExec(cmd)
-          if (stdout.replace(/[^0-9a-zA-Z]/g, '') === '1') {
-            return true
-          }
-        } catch (e) {
-          if (!e.message.includes('The domain/default pair of (com.apple.controlcenter, NSStatusItem VisibleCC FocusModes) does not exist')) {
-            // On macOS Tahoe 26.0, this entry would not exist if no focus mode is enabled
-            this._logErrorOnce('macos', e)
-          }
-        }
-      } else if (process.platform === 'linux') {
-        return await this._isDndEnabledLinux()
+    if (process.platform === 'win32') {
+      let wfa = 0
+      try {
+        wfa = getFocusAssist().value
+      } catch (e) { wfa = -1 } // getFocusAssist() throw an error if OS isn't windows
+      return wfa === 1 || wfa === 2
+    } else if (process.platform === 'darwin') {
+      const macOSMajorVersion = parseInt(process.getSystemVersion().split('.')[0])
+      let cmd = ''
+      if (macOSMajorVersion >= 26) {
+        cmd = 'defaults read com.apple.controlcenter "NSStatusItem VisibleCC FocusModes"'
+      } else {
+        cmd = 'defaults read com.apple.controlcenter "NSStatusItem Visible FocusModes"'
       }
-    } else {
+      try {
+        const asyncExec = this._getOrCreateAsyncExec()
+        const { stdout } = await asyncExec(cmd)
+        if (stdout.replace(/[^0-9a-zA-Z]/g, '') === '1') {
+          return true
+        }
+      } catch (e) {
+        if (!e.message.includes('The domain/default pair of (com.apple.controlcenter, NSStatusItem VisibleCC FocusModes) does not exist')) {
+          // On macOS Tahoe 26.0, this entry would not exist if no focus mode is enabled
+          this._logErrorOnce('macos', e)
+        }
+      }
+    } else if (process.platform === 'linux') {
+      return await this._isDndEnabledLinux()
+    }
+    return false
+  }
+
+  async _runningDndApp () {
+    try {
+      const processes = await psList()
+      return this.dndApps.find(app => processes.some(({ name }) => name && normalizeProcessName(name) === app))
+    } catch (e) {
+      this._logErrorOnce('apps', e)
+      return undefined
+    }
+  }
+
+  async _isFullscreenAppActive () {
+    try {
+      const { stdout } = await execFileAsync('osascript', ['-l', 'JavaScript', '-e', macOSFullscreenScript, String(process.pid)])
+      return stdout.trim() === 'true'
+    } catch (e) {
+      this._logErrorOnce('fullscreen', e)
       return false
     }
+  }
+
+  async _dndReason () {
+    if (this.monitorDnd && await this._isDndEnabled()) return 'Do Not Disturb'
+    if (this.dndApps.length > 0) {
+      const app = await this._runningDndApp()
+      if (app) return `running app '${app}'`
+    }
+    if (this.monitorFullscreen && await this._isFullscreenAppActive()) return 'full screen app'
+    return null
   }
 
   _getOrCreateAsyncExec () {
@@ -212,12 +269,12 @@ class DndManager extends EventEmitter {
 
   _checkDnd () {
     this.timer = setInterval(async () => {
-      const doNotDisturb = await this._doNotDisturb()
-      if (!this.isOnDnd && doNotDisturb) {
+      const reason = await this._dndReason()
+      if (!this.isOnDnd && reason) {
         this.isOnDnd = true
-        this.emit('dndStarted')
+        this.emit('dndStarted', reason)
       }
-      if (this.isOnDnd && !doNotDisturb) {
+      if (this.isOnDnd && !reason) {
         this.isOnDnd = false
         this.emit('dndFinished')
       }

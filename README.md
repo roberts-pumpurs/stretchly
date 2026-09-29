@@ -152,7 +152,7 @@ Clicking the *Stretchly* icon in your tray area will display the current status 
 
 *Stretchly* is monitoring your idle time, so when you are idle for 5 minutes, breaks will be paused until you return.
 
-*Stretchly* is also monitoring Do Not Disturb mode, so breaks are paused when DnD mode is On.
+*Stretchly* is also monitoring Do Not Disturb mode, so breaks are paused when DnD mode is On. Breaks are also paused during Zoom meetings, while [Do Not Disturb apps](#do-not-disturb-apps) run, and, on macOS, while a full screen app is open. Breaks resume when these end.
 
 *Stretchly* follows the theme of your system and is also available in dark mode.
 
@@ -222,6 +222,8 @@ Here are the preferences editable via the app. If values in the app does not sui
 - `trayIconStyle` - icon style for menubar: default, time to break, or progress to break
 - `silentNotifications` - enable sounds
 - `monitorDnd` - monitor DND mode
+- `monitorFullscreen` - pause breaks while a full screen app is open (macOS only)
+- `monitorDndApps` - pause breaks during Zoom meetings and while `dndApps` run
 - `checkNewVersion` - check for new versions
 
 #### Editing break ideas
@@ -300,7 +302,16 @@ In the preferences file, set `naturalBreaksInactivityResetTime` to your preferre
 You can also set `naturalBreaksCheckInterval` in milliseconds: how often idle time is checked. A higher number means lower CPU and energy usage, but slightly less responsive detection. Default value is `2000` which is 2 seconds.
 
 #### Do Not Disturb check interval
-In the preferences file, set `monitorDndCheckInterval` in milliseconds: how often Do Not Disturb status is checked. A higher number means lower CPU and energy usage, but slightly less responsive detection. On macOS and Linux this check can be relatively expensive, so increasing it can noticeably lower energy usage. Default value is `2000` which is 2 seconds.
+In the preferences file, set `monitorDndCheckInterval` in milliseconds: how often Do Not Disturb status is checked. This also sets how often full screen apps and Do Not Disturb apps are checked. A higher number means lower CPU and energy usage, but slightly less responsive detection. On macOS and Linux this check can be relatively expensive, so increasing it can noticeably lower energy usage. Default value is `2000` which is 2 seconds.
+
+#### Do Not Disturb apps
+In the preferences file, edit `dndApps` to list process names. Breaks pause while any of these processes runs, the same as in Do Not Disturb mode. Matching is by exact process name, is case-insensitive, and ignores a `.exe` suffix. The default value is `["CptHost"]`. Zoom starts `CptHost` only while you are in a meeting, so this entry detects Zoom meetings. For example, to also pause breaks while OBS or Keynote runs:
+
+```
+"dndApps": ["CptHost", "obs", "Keynote"]
+```
+
+Set `monitorDndApps` to `false` (or check "Show breaks even during Zoom meetings and while Do Not Disturb apps run" in Preferences) to turn this off.
 
 #### Volume for break sounds [![Contributor Preferences](https://img.shields.io/badge/Contributor_Preferences-✔-success)](#contributor-preferences)
 In the preferences file, set `volume` to your preferred value. Default value is `1`, which is 100% volume. Set it, for example, to `0.61` for 61% volume. This applies to both start and end break sounds.

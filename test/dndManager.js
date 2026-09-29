@@ -25,27 +25,31 @@ describe('dndManager', function () {
 
   it('should be running with default settings', () => new Promise((resolve) => {
     dndManager.isOnDnd.should.be.equal(false)
-    dndManager.monitorDnd.should.be.equal(true)
+    dndManager.timer.should.not.be.equal(null)
     resolve()
   }))
 
-  it('should not be running with monitorDnd: false', () => new Promise((resolve) => {
+  it('should not be running when every detection is disabled', () => new Promise((resolve) => {
     settings.set('monitorDnd', false)
+    settings.set('monitorFullscreen', false)
+    settings.set('monitorDndApps', false)
     dndManager.stop()
     dndManager = null
     dndManager = new DndManager(settings)
     dndManager.isOnDnd.should.be.equal(false)
-    dndManager.monitorDnd.should.be.equal(false)
+    ;(dndManager.timer === null).should.be.equal(true)
     resolve()
   }))
 
-  it('should be running with monitorDnd: true', () => new Promise((resolve) => {
+  it('should be running with only monitorDnd: true', () => new Promise((resolve) => {
     settings.set('monitorDnd', true)
+    settings.set('monitorFullscreen', false)
+    settings.set('monitorDndApps', false)
     dndManager.stop()
     dndManager = null
     dndManager = new DndManager(settings)
     dndManager.isOnDnd.should.be.equal(false)
-    dndManager.monitorDnd.should.be.equal(true)
+    dndManager.timer.should.not.be.equal(null)
     resolve()
   }))
 
@@ -53,16 +57,27 @@ describe('dndManager', function () {
     dndManager.stop()
     dndManager.start()
     dndManager.isOnDnd.should.be.equal(false)
-    dndManager.monitorDnd.should.be.equal(true)
+    dndManager.timer.should.not.be.equal(null)
     resolve()
   }))
 
   it('should stop when stop()', () => new Promise((resolve) => {
     dndManager.stop()
-    dndManager.monitorDnd.should.be.equal(false)
+    ;(dndManager.timer === null).should.be.equal(true)
     dndManager.isOnDnd.should.be.equal(false)
     resolve()
   }))
+
+  it('matches DND apps by process name, ignoring case and .exe', async () => {
+    settings.set('dndApps', ['NODE.exe', 'stretchly-missing-app'])
+    dndManager.stop()
+    dndManager.start()
+    ;(await dndManager._runningDndApp()).should.be.equal('node')
+    settings.set('dndApps', ['stretchly-missing-app'])
+    dndManager.stop()
+    dndManager.start()
+    ;((await dndManager._runningDndApp()) === undefined).should.be.equal(true)
+  })
 
   it('does not create a second timer when start() is called twice', () => new Promise((resolve) => {
     dndManager.stop()

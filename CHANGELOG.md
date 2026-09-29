@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- breaks pause during Zoom meetings and resume when the meeting ends
+- `dndApps` preference: breaks pause while any listed app runs
+- breaks pause while a full screen app is open on macOS
+
 ### Fixed
 - fix snap startup crash
 
