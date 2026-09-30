@@ -387,6 +387,7 @@ async function initialize (isAppStart = true) {
       finishBreak(shouldPlaySound, shouldPlanNext)
     })
     breakPlanner.on('resumeBreaks', () => { resumeBreaks() })
+    breakPlanner.on('offerBreakReset', (breakType, idleTime) => { offerBreakReset(breakType, idleTime) })
     breakPlanner.on('updateToolTip', function () {
       updateTray()
     })
@@ -1641,6 +1642,21 @@ function showNotification (text) {
     settings.get('silentNotifications')
   )
 }
+
+function offerBreakReset (breakType, idleTime) {
+  log.info(`Stretchly: offering to count idle time as a ${breakType}`)
+  processWin.webContents.send('offer-break-reset',
+    i18next.t(`main.${breakType}ResetOffer`, { minutes: Math.max(1, Math.round(idleTime / 60000)) }),
+    settings.get('silentNotifications')
+  )
+}
+
+ipcMain.on('accept-break-reset', function (event) {
+  if (breakPlanner.acceptBreakReset()) {
+    log.info('Stretchly: counting idle time as a break, planning next break')
+    updateTray()
+  }
+})
 
 ipcMain.on('postpone-mini-break', function (event) {
   log.info('Stretchly: postpone button clicked during Mini break')

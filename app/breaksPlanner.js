@@ -20,6 +20,7 @@ class BreaksPlanner extends EventEmitter {
     this.isPaused = false
     this.pollersSuspended = false
     this.isDelayedForTyping = false
+    this.breakResetOffer = null
     this.naturalBreaksManager = new NaturalBreaksManager(settings)
     this.dndManager = new DndManager(settings)
     this.appExclusionsManager = new AppExclusionsManager(settings)
@@ -44,11 +45,8 @@ class BreaksPlanner extends EventEmitter {
       this.emit('updateToolTip')
     })
 
-    this.naturalBreaksManager.on('idleFinished', () => {
-      if (this.scheduler.isPaused) {
-        this.scheduler.resume()
-        log.info('Stretchly: user is back, continuing to next break')
-      }
+    this.naturalBreaksManager.on('idleFinished', (idleTime) => {
+      if (this.scheduler.isPaused) this._finishIdle(idleTime)
       this.emit('updateToolTip')
     })
 
@@ -196,6 +194,35 @@ class BreaksPlanner extends EventEmitter {
     }
     this.isDelayedForTyping = false
     this.emit(eventName)
+  }
+
+  _finishIdle (idleTime) {
+    const breakType = this._scheduledBreakType
+    if (this.settings.get('naturalBreaksCountIdleAsBreak')) {
+      if (this.settings.get('break') && idleTime >= this.settings.get('breakDuration')) {
+        this.reset()
+        log.info('Stretchly: user was idle for a Long break, resetting breaks')
+        return
+      }
+      if (idleTime >= this.settings.get(`${breakType}Duration`)) {
+        this.nextBreak()
+        log.info(`Stretchly: user was idle for a ${breakType}, planning next break`)
+        return
+      }
+    }
+    this.scheduler.resume()
+    log.info('Stretchly: user is back, continuing to next break')
+    if (this.settings.get('naturalBreaksResetOffer') && idleTime >= this.settings.get('naturalBreaksResetOfferTime')) {
+      this.breakResetOffer = this.scheduler
+      this.emit('offerBreakReset', breakType, idleTime)
+    }
+  }
+
+  acceptBreakReset () {
+    if (this.scheduler !== this.breakResetOffer || !(this.scheduler.timeLeft > 0)) return false
+    this.breakResetOffer = null
+    this.nextBreak()
+    return true
   }
 
   nextBreakAfterNotification () {

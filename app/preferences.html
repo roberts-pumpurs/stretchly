@@ -73,6 +73,25 @@
       <input type="checkbox" value="naturalBreaks" id="monitorIdleTime">
       <label data-i18next="preferences.settings.monitorIdleTime" for="monitorIdleTime"></label>
     </div>
+    <div>
+      <input type="checkbox" value="naturalBreaksCountIdleAsBreak" id="countIdleAsBreak">
+      <label data-i18next="preferences.settings.countIdleAsBreak" for="countIdleAsBreak"></label>
+    </div>
+    <div>
+      <input type="checkbox" value="naturalBreaksResetOffer" id="offerIdleAsBreak">
+      <label data-i18next="preferences.settings.offerIdleAsBreak" for="offerIdleAsBreak"></label>
+    </div>
+    <div>
+      <label data-i18next="preferences.settings.offerIdleAsBreakAfter" data-same-width-label for="offerIdleAsBreakAfter"></label>
+      <input type="range" min="20" max="240" step="10" list="tickmarksOfferIdleAsBreakAfter"
+        name="naturalBreaksResetOfferTime" data-divisor="1000" id="offerIdleAsBreakAfter">
+      <datalist id="tickmarksOfferIdleAsBreakAfter">
+        <option value="60"></option>
+        <option value="120"></option>
+        <option value="180"></option>
+      </datalist>
+      <output data-unit="seconds"></output>
+    </div>
     <div class="linux-hidden win32-hidden">
       <input type="checkbox" value="delayBreaksWhileTyping" id="delayBreaksWhileTyping">
       <label data-i18next="preferences.settings.delayBreaksWhileTyping" for="delayBreaksWhileTyping"></label>

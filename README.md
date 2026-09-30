@@ -152,7 +152,9 @@ Clicking the *Stretchly* icon in your tray area will display the current status 
 
 <img src="tray.png" height="140">
 
-*Stretchly* is monitoring your idle time. When there is no mouse or keyboard input for 20 seconds, the countdown to the next break stops, so a break never starts while you are away. The tray shows the paused icon, and on macOS the menubar shows "Idle" next to it. When you are back, the countdown continues with the time that was left. When you are idle for 5 minutes, *Stretchly* counts that as a break and starts a new countdown when you return.
+*Stretchly* is monitoring your idle time. When there is no mouse or keyboard input for 20 seconds, the countdown to the next break stops, so a break never starts while you are away. The tray shows the paused icon, and on macOS the menubar shows "Idle" next to it. When you are back, the countdown continues with the time that was left.
+
+When you were idle for at least the duration of the next break, *Stretchly* counts that as the break and starts the countdown to the break after it. When you were idle for at least the Long break duration, *Stretchly* resets breaks. When you were idle for more than 30 seconds but less than the duration of the next break, *Stretchly* shows a notification. Click it to count the idle time as the break. You can turn both off in Preferences and choose how long you must be idle before the notification shows. After 5 minutes of idle time, *Stretchly* pauses breaks and resets them when you return.
 
 On macOS, when a break is due while you are typing, *Stretchly* waits until you stop typing for 3 seconds. You can turn this off in Preferences, or set `delayBreaksWhileTyping` to `false`.
 
@@ -221,6 +223,9 @@ Here are the preferences editable via the app. If values in the app does not sui
 - `ideas` - show break ideas
 - `naturalBreaks` - monitor idle time
 - `delayBreaksWhileTyping` - wait until typing stops before starting a break (macOS only)
+- `naturalBreaksCountIdleAsBreak` - count idle time as a break when it lasts as long as the break
+- `naturalBreaksResetOffer` - offer to count shorter idle time as a break
+- `naturalBreaksResetOfferTime` - idle time in milliseconds before the offer shows
 - `cursorCountdown` - show a countdown next to the mouse pointer 5 seconds before a break
 - `allScreens` - show breaks on all screens
 - `language` - language

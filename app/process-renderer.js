@@ -10,19 +10,26 @@ window.onload = async (e) => {
 
   window.stretchly.onShowNotification(async (text, silent) => {
     __electronLog.info(`Stretchly: showing notification "${text}" (silent: ${silent})`)
-    const title = await window.utils.shouldShowNotificationTitle(
-      await window.runtime.platform(),
-      await window.runtime.getSystemVersion()
-    )
-      ? 'Stretchly'
-      : ''
-    const notification = new Notification(title, {
+    const notification = new Notification(await notificationTitle(), {
       body: text,
       requireInteraction: true,
       silent,
       icon: '../build/icon.ico'
     })
     setTimeout(() => notification.close(), 7000)
+  })
+
+  window.stretchly.onOfferBreakReset(async (text, silent) => {
+    __electronLog.info(`Stretchly: offering break reset "${text}" (silent: ${silent})`)
+    const notification = new Notification(await notificationTitle(), {
+      body: text,
+      silent,
+      icon: '../build/icon.ico'
+    })
+    notification.onclick = () => {
+      window.stretchly.acceptBreakReset()
+      notification.close()
+    }
   })
 
   window.stretchly.onCheckVersion(async (oldVersion, notify, silent) => {
@@ -50,9 +57,17 @@ window.onload = async (e) => {
     }
   })
 
+  async function notificationTitle () {
+    return await window.utils.shouldShowNotificationTitle(
+      await window.runtime.platform(),
+      await window.runtime.getSystemVersion()
+    )
+      ? 'Stretchly'
+      : ''
+  }
+
   async function notifyNewVersion (silent) {
-    const title = await window.utils.shouldShowNotificationTitle(await window.runtime.platform(), await window.runtime.getSystemVersion()) ? 'Stretchly' : ''
-    const notification = new Notification(title, {
+    const notification = new Notification(await notificationTitle(), {
       body: await window.i18next.t('process.newVersionAvailable'),
       silent,
       icon: '../build/icon.ico'

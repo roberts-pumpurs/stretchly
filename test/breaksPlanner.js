@@ -75,29 +75,129 @@ describe('breaksPlanner', () => {
     beforeEach(() => {
       vi.useFakeTimers()
       settings.set('microbreakNotification', false)
+      settings.set('breakNotification', false)
     })
 
     afterEach(() => {
       vi.useRealTimers()
     })
 
+    const beIdleFor = async (idleTime) => {
+      breaksPlanner.naturalBreaksManager.isOnNaturalBreak = true
+      breaksPlanner.naturalBreaksManager.emit('idleStarted')
+      await vi.advanceTimersByTimeAsync(idleTime)
+      breaksPlanner.naturalBreaksManager.isOnNaturalBreak = false
+      breaksPlanner.naturalBreaksManager.emit('idleFinished', idleTime)
+    }
+
+    const planLongBreak = () => {
+      breaksPlanner.nextBreak()
+      breaksPlanner.nextBreak()
+      breaksPlanner.nextBreak()
+    }
+
     it('holds the next break while idle and continues with the time that was left', async () => {
       const started = vi.fn()
+      settings.set('microbreakDuration', 60000)
       breaksPlanner.on('startMicrobreak', started)
       breaksPlanner.nextBreak()
       await vi.advanceTimersByTimeAsync(100000)
       breaksPlanner.naturalBreaksManager.isOnNaturalBreak = true
       breaksPlanner.naturalBreaksManager.emit('idleStarted')
       breaksPlanner.isIdle.should.equal(true)
-      await vi.advanceTimersByTimeAsync(1000000)
+      await vi.advanceTimersByTimeAsync(25000)
       started.mock.calls.length.should.equal(0)
       breaksPlanner.naturalBreaksManager.isOnNaturalBreak = false
-      breaksPlanner.naturalBreaksManager.emit('idleFinished')
+      breaksPlanner.naturalBreaksManager.emit('idleFinished', 25000)
       breaksPlanner.isIdle.should.equal(false)
       await vi.advanceTimersByTimeAsync(499999)
       started.mock.calls.length.should.equal(0)
       await vi.advanceTimersByTimeAsync(1)
       started.mock.calls.length.should.equal(1)
+    })
+
+    it('counts idle time as the Mini break when it lasts the Mini break duration', async () => {
+      breaksPlanner.nextBreak()
+      await vi.advanceTimersByTimeAsync(100000)
+      await beIdleFor(20000)
+      breaksPlanner.breakNumber.should.equal(2)
+      breaksPlanner.scheduler.reference.should.equal('startMicrobreak')
+      breaksPlanner.scheduler.timeLeft.should.equal(600000)
+    })
+
+    it('resets breaks when idle time lasts the Long break duration', async () => {
+      breaksPlanner.nextBreak()
+      breaksPlanner.nextBreak()
+      await beIdleFor(300000)
+      breaksPlanner.breakNumber.should.equal(1)
+      breaksPlanner.scheduler.timeLeft.should.equal(600000)
+    })
+
+    it('offers to count idle time as the Long break when it is shorter than the Long break', async () => {
+      const offered = vi.fn()
+      breaksPlanner.on('offerBreakReset', offered)
+      planLongBreak()
+      await vi.advanceTimersByTimeAsync(100000)
+      await beIdleFor(60000)
+      offered.mock.calls.should.deep.equal([['break', 60000]])
+      breaksPlanner.scheduler.reference.should.equal('startBreak')
+      breaksPlanner.scheduler.timeLeft.should.equal(500000)
+      breaksPlanner.acceptBreakReset().should.equal(true)
+      breaksPlanner.scheduler.reference.should.equal('startMicrobreak')
+      breaksPlanner.scheduler.timeLeft.should.equal(600000)
+    })
+
+    it('does not offer a reset after less than 30 seconds of idle time', async () => {
+      const offered = vi.fn()
+      breaksPlanner.on('offerBreakReset', offered)
+      planLongBreak()
+      await beIdleFor(25000)
+      offered.mock.calls.length.should.equal(0)
+      breaksPlanner.acceptBreakReset().should.equal(false)
+    })
+
+    it('offers to count idle time as the break instead of counting it when counting is off', async () => {
+      const offered = vi.fn()
+      settings.set('naturalBreaksCountIdleAsBreak', false)
+      breaksPlanner.on('offerBreakReset', offered)
+      breaksPlanner.nextBreak()
+      await vi.advanceTimersByTimeAsync(100000)
+      await beIdleFor(300000)
+      offered.mock.calls.should.deep.equal([['microbreak', 300000]])
+      breaksPlanner.breakNumber.should.equal(1)
+      breaksPlanner.scheduler.timeLeft.should.equal(500000)
+    })
+
+    it('offers a reset only after the chosen idle time', async () => {
+      const offered = vi.fn()
+      settings.set('naturalBreaksResetOfferTime', 90000)
+      breaksPlanner.on('offerBreakReset', offered)
+      planLongBreak()
+      await beIdleFor(60000)
+      offered.mock.calls.length.should.equal(0)
+      await beIdleFor(90000)
+      offered.mock.calls.length.should.equal(1)
+    })
+
+    it('does not offer a reset when offers are off', async () => {
+      const offered = vi.fn()
+      settings.set('naturalBreaksResetOffer', false)
+      breaksPlanner.on('offerBreakReset', offered)
+      planLongBreak()
+      await beIdleFor(60000)
+      offered.mock.calls.length.should.equal(0)
+      breaksPlanner.acceptBreakReset().should.equal(false)
+    })
+
+    it('ignores an accepted offer once the offered break has started', async () => {
+      const started = vi.fn()
+      breaksPlanner.on('startBreak', started)
+      planLongBreak()
+      await beIdleFor(60000)
+      await vi.advanceTimersByTimeAsync(600000)
+      started.mock.calls.length.should.equal(1)
+      breaksPlanner.acceptBreakReset().should.equal(false)
+      breaksPlanner.scheduler.reference.should.equal('startBreak')
     })
 
     it('delays a due break until typing stops', async () => {

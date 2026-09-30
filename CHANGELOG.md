@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- idle time as long as the next break counts as that break, and idle time as long as a Long break resets breaks
+- after more than 30 seconds of idle time that is shorter than the next break, a notification offers to count it as the break
+- Preferences to turn off counting idle time as a break, turn off the offer, and choose the idle time before the offer
 
 ## [1.23.0] - 2026-09-29
 ### Added

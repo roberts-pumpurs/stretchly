@@ -4,6 +4,8 @@
     "microbreakIn": "Mini break in $t(utils.seconds, {'count': {{seconds}} })",
     "breakIn": "Long break in $t(utils.seconds, {'count': {{seconds}} })",
     "resumingBreaks": "Resuming breaks",
+    "microbreakResetOffer": "You were away for $t(utils.minutes, {'count': {{minutes}} }). Click to count it as your Mini break.",
+    "breakResetOffer": "You were away for $t(utils.minutes, {'count': {{minutes}} }). Click to count it as your Long break.",
     "downloadLatestVersion": "Download latest version",
     "toBreak": "Long break",
     "toMicrobreak": "Mini break",
@@ -55,6 +57,9 @@
       "addDndApp": "Add app…",
       "removeDndApp": "Remove",
       "delayBreaksWhileTyping": "Wait until I stop typing before starting a break",
+      "countIdleAsBreak": "Count idle time as a break when it lasts as long as the break",
+      "offerIdleAsBreak": "Offer to count shorter idle time as a break",
+      "offerIdleAsBreakAfter": "Offer after:",
       "cursorCountdown": "Show a countdown next to the pointer 5 seconds before a break",
       "language": "Select language:",
       "restoreDefaults": "Restore defaults"
